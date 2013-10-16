@@ -178,7 +178,7 @@ public class ChatClientController {
 		
 		//ENTER YOUR CODE TO DISCONNECT
 		
-				String message="PLST&" + this.connectedUser;
+				String message="PLST&" + this.connectedUser.getNick();
 				String reply;
 				
 				//Usuario que ha enviado la solicitud de conexion
@@ -199,13 +199,14 @@ public class ChatClientController {
 				
 				String[] parametros = reply.split("&");
 				
-				System.out.println("getconnectedusers");
+				
 				
 				if(parametros[0].equals("USRL")){
 					
+					System.out.println("res_usu"+parametros[1]);
 					String[] userArray = parametros[1].split(" ");
 					for(int i=0; i<userArray.length;i++){
-						connectedUsers.add(userArray[i]);
+						connectedUsers.add(userArray[i].trim());
 					}
 					
 					return connectedUsers;
@@ -252,7 +253,7 @@ public class ChatClientController {
 		String message = "";
 		try {
 				
-			byte[] buffer = new byte[65507];//Maximun UDP size
+			byte[] buffer = new byte[1024];//Maximun UDP size
 			DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
 			udpSocket.receive(reply);	
 

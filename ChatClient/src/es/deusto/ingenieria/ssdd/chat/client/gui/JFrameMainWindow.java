@@ -244,13 +244,14 @@ public class JFrameMainWindow extends JFrame implements Observer {
 				this.txtFieldNick.setEditable(true);
 				this.listUsers.setEnabled(true);
 				this.listUsers.clearSelection();
+				
 				this.btnConnect.setText("Connect");
 				this.btnSendMsg.setEnabled(false);
 				this.textAreaHistory.setText("");
 				this.textAreaSendMsg.setText("");
-				this.txtFieldServerIP.setText("");
-				this.txtFieldServerPort.setText("");
-				this.txtFieldNick.setText("");
+//				this.txtFieldServerIP.setText("");
+//				this.txtFieldServerPort.setText("");
+//				this.txtFieldNick.setText("");
 				
 				this.setTitle("Chat main window - 'Disconnected'");
 			} else {
