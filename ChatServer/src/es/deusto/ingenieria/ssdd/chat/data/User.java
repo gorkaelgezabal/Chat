@@ -1,8 +1,30 @@
 package es.deusto.ingenieria.ssdd.chat.data;
 
+import java.net.InetAddress;
+
 public class User {	
 	private String nick;
+	private InetAddress ip;
+	private int port;
 	
+
+
+	public InetAddress getIp() {
+		return ip;
+	}
+
+	public void setIp(InetAddress ip) {
+		this.ip = ip;
+	}
+
+	public int getPort() {
+		return port;
+	}
+
+	public void setPort(int port) {
+		this.port = port;
+	}
+
 	public String getNick() {
 		return nick;
 	}
