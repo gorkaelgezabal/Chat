@@ -274,7 +274,7 @@ public class JFrameMainWindow extends JFrame implements Observer {
 			} else if (this.controller.isChatSessionOpened() && this.listUsers.getSelectedValue().equals(this.controller.getChatReceiver())) {			
 				int result = JOptionPane.showConfirmDialog(this, "Do you want to close your current chat session with '" + this.controller.getChatReceiver() + "'", "Close chat Session", JOptionPane.YES_NO_OPTION);				
 
-				if (result == JOptionPane.OK_OPTION && this.controller.sendChatClosure()) {
+				if (result == JOptionPane.OK_OPTION && this.controller.sendChatClosure(this.listUsers.getSelectedValue(),txtFieldNick.getText())) {
 					this.listUsers.clearSelection();					
 					this.setTitle("Chat main window - 'Connected'");
 				}
