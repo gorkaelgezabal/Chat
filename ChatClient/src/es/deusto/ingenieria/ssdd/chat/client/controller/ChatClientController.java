@@ -13,8 +13,9 @@ import java.util.Observer;
 import es.deusto.ingenieria.ssdd.util.observer.local.LocalObservable;
 import es.deusto.ingenieria.ssdd.chat.data.Message;
 import es.deusto.ingenieria.ssdd.chat.data.User;
+import es.deusto.ingenieria.ssdd.chat.*;
 
-public class ChatClientController {
+public class ChatClientController  {
 	private String serverIP;
 	private int serverPort;
 	private User connectedUser;
@@ -103,6 +104,11 @@ public class ChatClientController {
 		if(parametros[0].trim().equals("OK")){
 			
 			this.connectedUser = user1;
+
+			Hilo hilo = new Hilo(this.udpSocket,this);
+			Thread t= new Thread(hilo);
+			t.start();
+		   
 			mensaje.setText("Connected succesfully.");
 			
 			this.observable.notifyObservers(mensaje);
@@ -171,6 +177,8 @@ public class ChatClientController {
 		
 		return true;
 	}
+	
+	
 	
 	public List<String> getConnectedUsers() {
 		List<String> connectedUsers = new ArrayList<>();
@@ -312,7 +320,7 @@ public class ChatClientController {
 		return true;
 	}	
 	
-	public void receiveChatRequest() {
+	public void receiveChatRequest(String reply) {
 		
 		//ENTER YOUR CODE TO RECEIVE A CHAT REQUEST
 		
