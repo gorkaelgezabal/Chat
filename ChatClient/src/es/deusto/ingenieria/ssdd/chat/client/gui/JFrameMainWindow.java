@@ -324,8 +324,7 @@ public class JFrameMainWindow extends JFrame implements Observer {
 		StyleConstants.setForeground(attrs, Color.MAGENTA);	
 		
 		try {
-			this.textAreaHistory.getStyledDocument().insertString(this.textAreaHistory.getStyledDocument().getLength(), newMessage, attrs);
-			System.out.println("append");
+			this.textAreaHistory.getStyledDocument().insertString(this.textAreaHistory.getStyledDocument().getLength(), newMessage, attrs);;
 			System.out.println(this.textAreaHistory.getText());
 		} catch (BadLocationException e) {
 			System.err.println("# Error updating message history: " + e.getMessage());
@@ -338,18 +337,25 @@ public class JFrameMainWindow extends JFrame implements Observer {
 		//Update this method to process the request received from other users
 		
 		if (this.controller.isConnected()) {
-			
-			System.out.println("class name"+object.getClass().getName());
-			System.out.println("class message"+Message.class.getName());
 
 			if (object. getClass().getName().equals(Message.class.getName())) {
 				Message newMessage = (Message) object;
-			
-				System.out.println(newMessage.getTo().getNick());
-				System.out.println(this.controller.getConnectedUser());
 
-				if (newMessage.getTo().getNick() == this.controller.getConnectedUser()) {
-					this.appendReceivedMessageToHistory(newMessage.getText(), newMessage.getFrom().getNick(), newMessage.getTimestamp());
+				if (newMessage.getTo().getNick().equals(this.controller.getConnectedUser()) ) {
+					System.out.println(newMessage.getText()+"= talk");
+					if(newMessage.getText().equals("TALK")){
+						
+						int result = JOptionPane.showConfirmDialog(this, "Do you want to start a new chat session with '" + newMessage.getFrom()  + "'", "Open chat Session", JOptionPane.YES_NO_OPTION);
+
+						if (result == JOptionPane.OK_OPTION ) {
+							this.controller.acceptChatRequest(newMessage.getTo().getNick(), newMessage.getFrom().getNick());
+							this.controller.setChatReceiver(newMessage.getFrom());
+						}	
+					}
+					else{
+						
+						this.appendReceivedMessageToHistory(newMessage.getText(), newMessage.getFrom().getNick(), newMessage.getTimestamp());
+					}
 					
 				}
 			}

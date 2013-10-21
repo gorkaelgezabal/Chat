@@ -22,6 +22,20 @@ public class ChatClientController  {
 	private User chatReceiver;
 	private LocalObservable observable;
 	private DatagramSocket udpSocket;
+	
+	public void setChatReceiver(User chatReceiver) {
+		this.chatReceiver = chatReceiver;
+	}
+
+	public LocalObservable getObservable() {
+		return observable;
+	}
+
+	public void setObservable(LocalObservable observable) {
+		this.observable = observable;
+	}
+
+
 
 	
 	public ChatClientController() {
@@ -264,7 +278,6 @@ public class ChatClientController  {
 			byte[] buffer = new byte[1024];//Maximun UDP size
 			DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
 			udpSocket.receive(reply);	
-
 			 message = new String(reply.getData());
 			
 		} catch (SocketException e) {
