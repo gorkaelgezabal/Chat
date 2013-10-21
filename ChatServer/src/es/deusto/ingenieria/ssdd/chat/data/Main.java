@@ -16,10 +16,7 @@ public class Main {
 	public static void main(String args[]) {
 		//args[0] = Server socket port
 		int serverPort = args.length == 0 ? Main.PORT : Integer.parseInt(args[0]);
-		User user2 = new User();
-		user2.setNick("proba");
 		List<User> connectedUsers = new ArrayList<User>();
-		connectedUsers.add(user2);
 		
 		try (DatagramSocket udpSocket = new DatagramSocket(serverPort)) {
 			DatagramPacket request = null;
@@ -96,9 +93,10 @@ public class Main {
 					
 					for(int i=0;i<connectedUsers.size();i++){
 						
-						if(parameters[2].equals(connectedUsers.get(i).getNick())){
+						if(parameters[2].trim().equals(connectedUsers.get(i).getNick())){
 							
 							reply = new DatagramPacket(message.getBytes(), message.length(), connectedUsers.get(i).getIp(), connectedUsers.get(i).getPort());
+							udpSocket.send(reply);
 						}
 					}
 				}

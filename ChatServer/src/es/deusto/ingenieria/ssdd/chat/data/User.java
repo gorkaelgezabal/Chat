@@ -6,8 +6,6 @@ public class User {
 	private String nick;
 	private InetAddress ip;
 	private int port;
-	
-
 
 	public InetAddress getIp() {
 		return ip;
