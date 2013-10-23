@@ -21,7 +21,7 @@ public class Main {
 		try (DatagramSocket udpSocket = new DatagramSocket(serverPort)) {
 			DatagramPacket request = null;
 			DatagramPacket reply = null;
-			byte[] buffer = new byte[1024];
+
 			User user = new User();
 			user.setNick("Server");
 
@@ -30,6 +30,7 @@ public class Main {
 				System.out.println("Running...");
 				String mensaje;
 				String userList= "";
+				byte[] buffer = new byte[1024];
 				
 				request = new DatagramPacket(buffer, buffer.length);
 				udpSocket.receive(request);		
@@ -45,25 +46,41 @@ public class Main {
 				
 				//Se ejecuta dependiendo del comando
 				if(parameters[0].trim().equals("CONN")){
-					
-					mensaje = "OK";
-					reply = new DatagramPacket(mensaje.getBytes(), mensaje.length(), request.getAddress(), request.getPort());
 
 					//Se añade a la lista de conectados
 					User user1 = new User();
 					user1.setNick(parameters[1].trim());
 					user1.setIp(request.getAddress());
 					user1.setPort(request.getPort());
-					connectedUsers.add(user1);	
 					
+					//Comprobar si el nombre de usuario esta siendo utilizado
+					boolean onlist= false;
+					for(int i=0;i<connectedUsers.size();i++){
+						
+						if(connectedUsers.get(i).equals(user1.getNick())){
+							onlist=true;
+						}
+					}
+					
+					//
+					if(!onlist){
+						mensaje = "OK";
+						connectedUsers.add(user1);	
+						
+					}
+					else{
+						mensaje = "ER&6";
+					}	
+					
+					reply = new DatagramPacket(mensaje.getBytes(), mensaje.length(), request.getAddress(), request.getPort());
 					udpSocket.send(reply);
 					System.out.println("sent");
 				}
 				else if(parameters[0].trim().equals("NCON")){
-					boolean berdin;
+
 					//Se elimina el usuario de la lista de conectados
 					for (int i=0;i<connectedUsers.size();i++){
-						if(berdin = parameters[1].trim().equals(connectedUsers.get(i).getNick())){
+						if(parameters[1].trim().equals(connectedUsers.get(i).getNick())){
 							connectedUsers.remove(i);
 						}
 					}
@@ -89,7 +106,7 @@ public class Main {
 				}
 				//Solo si esta conectado al chat recive, mensajes y mensajes para cerrar chat (hay que hacer)
 				// Si recive una solicitud de chat, una denegacion de chat o un mensaje tiene que encontrar su destinatario y enviar el mensaje original
-				else if (parameters[0].trim().equals("TALK") ||parameters[0].trim().equals("NTLK") || parameters[0].trim().equals("CLSE") || parameters[0].trim().equals("MESG") || parameters[0].trim().equals("SCHT") ){
+				else if (parameters[0].trim().equals("TALK") ||parameters[0].trim().equals("NTLK") || parameters[0].trim().equals("CLSE") || parameters[0].trim().equals("MESG") || parameters[0].trim().equals("SCHT")|| parameters[0].trim().equals("NCHT") ){
 					
 					for(int i=0;i<connectedUsers.size();i++){
 						

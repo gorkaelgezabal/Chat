@@ -60,6 +60,10 @@ public class Hilo implements Runnable{
 					
 					mensaje.setText("SCHT");
 				}
+				else if(parameters[0].trim().equals("NCHT")){
+					
+					mensaje.setText("NCHT");
+				}
 				
 				controller.getObservable().notifyObservers(mensaje);
 				

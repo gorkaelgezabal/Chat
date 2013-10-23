@@ -35,8 +35,6 @@ public class ChatClientController  {
 		this.observable = observable;
 	}
 
-
-
 	
 	public ChatClientController() {
 		this.observable = new LocalObservable();
@@ -50,6 +48,10 @@ public class ChatClientController  {
 		} else {
 			return null;
 		}
+	}
+	
+	public void setConnectedUser(User user){
+		this.connectedUser=user;
 	}
 	
 	public String getConnectedUserName(){
@@ -236,7 +238,11 @@ public class ChatClientController  {
 					System.out.println("res_usu"+parametros[1]);
 					String[] userArray = parametros[1].split(" ");
 					for(int i=0; i<userArray.length;i++){
-						connectedUsers.add(userArray[i].trim());
+						
+						if(!userArray[i].trim().equals(this.connectedUser.getNick())){
+							connectedUsers.add(userArray[i].trim());
+						}
+						
 					}
 					
 					return connectedUsers;
@@ -265,7 +271,7 @@ public class ChatClientController  {
 			byte[] byteMsg = message.getBytes();
 			DatagramPacket request = new DatagramPacket(byteMsg, byteMsg.length, serverHost, serverPort);
 			udpSocket.send(request);
-		
+			
 			System.out.println("Mensaje enviado");
 			
 		} catch (SocketException e) {
@@ -286,8 +292,9 @@ public class ChatClientController  {
 				
 			byte[] buffer = new byte[1024];//Maximun UDP size
 			DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
-			udpSocket.receive(reply);	
-			 message = new String(reply.getData());
+			udpSocket.receive(reply);
+			message = new String(reply.getData());
+			 
 			
 		} catch (SocketException e) {
 			System.err.println("# UDPClient Socket error: " + e.getMessage());
@@ -303,9 +310,6 @@ public class ChatClientController  {
 	public boolean sendChatRequest(String to, String nick) {
 		
 		//ENTER YOUR CODE TO SEND A CHAT REQUEST
-		
-		this.chatReceiver = new User();
-		this.chatReceiver.setNick(to);
 		
 		String message="TALK&" + nick+"&"+to;
 		String reply;
@@ -357,21 +361,20 @@ public class ChatClientController  {
 		return true;
 	}
 	
-	public boolean refuseChatRequest(String nick, String to) {
+	public boolean refuseChatRequest(String from, String to) {
 		
 		//ENTER YOUR CODE TO REFUSE A CHAT REQUEST
 		
 		this.chatReceiver = new User();
 		this.chatReceiver.setNick(to);
 		
-		String message="NCHT&" + nick+"&"+to;
-		String reply;
+		String message="NCHT&" + from+"&"+to;
 		
 		//Usuario que ha enviado la solicitud de conexion
 		User user = new User();
 		User user1 = new User();
-		user.setNick("Server");
-		user1.setNick(nick);
+		user.setNick(from);
+		user1.setNick(to);
 				
 				//Preparacion mensaje
 		Message mensaje = new Message();
@@ -380,40 +383,23 @@ public class ChatClientController  {
 		mensaje.setTo(user1);
 		mensaje.setTimestamp(date.getTime());
 		
-		sendMessage(message);
-		reply = receiveMessage(this.udpSocket);
-		
-		String[] parametros = reply.split("&");
-		if(parametros[0].equals("OK")){
-			this.observable.notifyObservers("S: Chat opened.");
-		}
-		else if(parametros[0].equals("ER")){
-
-			errorCheck(parametros[1],mensaje);
-		}
-		else{
-
-			this.observable.notifyObservers("S: Chat reqest refused.");
-		}
-		
+		sendMessage(message);		
 		
 		return true;
 	}	
 	
-	public boolean sendChatClosure(String nick, String to) {
+	public boolean sendChatClosure(String from, String to) {
 		
 		//ENTER YOUR CODE TO SEND A CHAT CLOSURE
 		this.chatReceiver = null;
-		this.chatReceiver.setNick(to);
 		
-		String message="CLSE&" + nick+"&"+to;
-		String reply;
+		String message="CLSE&" + from+"&"+to;
 		
 		//Usuario que ha enviado la solicitud de conexion
 		User user = new User();
 		User user1 = new User();
-		user.setNick("Server");
-		user1.setNick(nick);
+		user.setNick(from);
+		user1.setNick(to);
 				
 				//Preparacion mensaje
 		Message mensaje = new Message();
@@ -422,22 +408,7 @@ public class ChatClientController  {
 		mensaje.setTo(user1);
 		mensaje.setTimestamp(date.getTime());
 		
-		sendMessage(message);
-		reply = receiveMessage(this.udpSocket);
-		
-		String[] parametros = reply.split("&");
-		if(parametros[0].equals("OK")){
-			this.observable.notifyObservers("S: Chat closed.");
-		}
-		else if(parametros[0].equals("ER")){
-
-			errorCheck(parametros[1],mensaje);
-		}
-		else{
-
-			this.observable.notifyObservers("S: Unknown error.");
-		}
-		
+		sendMessage(message);		
 		
 		return true;
 	}
