@@ -33,35 +33,36 @@ public class Hilo implements Runnable{
 				
 				String[] parameters = reply.split("&");
 				
+				user.setNick(parameters[1].trim());
+				user1.setNick(parameters[2].trim());
+				user.setIp(udpSocket.getInetAddress());
+				user.setPort(udpSocket.getPort());
+				
+				mensaje.setFrom(user);
+				mensaje.setTo(user1);
+				mensaje.setTimestamp(date.getTime());
+				
 				//Chat request
 				if(parameters[0].trim().equals("TALK")){
 					
-					user.setNick(parameters[1].trim());
-					user1.setNick(parameters[2].trim());
-					user.setIp(udpSocket.getInetAddress());
-					user.setPort(udpSocket.getPort());
-					
-					mensaje.setFrom(user);
-					mensaje.setTo(user1);
-					mensaje.setTimestamp(date.getTime());
 					mensaje.setText("TALK");
-					
-					System.out.println("TALK CLIENTE");
-					controller.getObservable().notifyObservers(mensaje);
 				}
 				else if(parameters[0].trim().equals("NTLK")){
-					
+					mensaje.setText("NTLK");
 				}
 				else if(parameters[0].trim().equals("MESG")){
-					
+					mensaje.setText(parameters[3].trim());
 				}
 				else if(parameters[0].trim().equals("CLSE")){
+					mensaje.setText("CLSE");
+				}
+				else if(parameters[0].trim().equals("SCHT")){
 					
+					mensaje.setText("SCHT");
 				}
 				
+				controller.getObservable().notifyObservers(mensaje);
+				
 			}
-		
 	}
-
-	
 }

@@ -52,6 +52,14 @@ public class ChatClientController  {
 		}
 	}
 	
+	public String getConnectedUserName(){
+		return this.connectedUser.getNick();
+	}
+	
+	public String getChatReceiverName() {
+		return this.chatReceiver.getNick();
+	}
+	
 	public String getChatReceiver() {
 		if (this.chatReceiver != null) {
 			return this.chatReceiver.getNick();
@@ -251,6 +259,7 @@ public class ChatClientController  {
 		//ENTER YOUR CODE TO SEND A MESSAGE
 
 		try  {
+			
 			this.udpSocket = new DatagramSocket();
 			InetAddress serverHost = InetAddress.getByName(serverIP);			
 			byte[] byteMsg = message.getBytes();
@@ -313,22 +322,8 @@ public class ChatClientController  {
 		mensaje.setFrom(user);
 		mensaje.setTo(user1);
 		mensaje.setTimestamp(date.getTime());
-		
+		mensaje.setText("Chat session opened");
 		sendMessage(message);
-		reply = receiveMessage(this.udpSocket);
-		
-		String[] parametros = reply.split("&");
-		if(parametros[0].equals("OK")){
-			this.observable.notifyObservers("S: Chat opened.");
-		}
-		else if(parametros[0].equals("ER")){
-
-			errorCheck(parametros[1],mensaje);
-		}
-		else{
-
-			this.observable.notifyObservers("S: Unknown error.");
-		}
 		
 		return true;
 	}	
@@ -346,41 +341,18 @@ public class ChatClientController  {
 	public boolean acceptChatRequest(String nick, String to) {
 		
 		//ENTER YOUR CODE TO ACCEPT A CHAT REQUEST
-		this.chatReceiver = new User();
-		this.chatReceiver.setNick(to);
 		
-		String message="SCHT&" + nick+"&"+to;
-		String reply;
+		String message="SCHT&" + this.connectedUser.getNick()+"&"+this.chatReceiver.getNick();
 		
-		//Usuario que ha enviado la solicitud de conexion
-		User user = new User();
-		User user1 = new User();
-		user.setNick("Server");
-		user1.setNick(nick);
 				
 				//Preparacion mensaje
 		Message mensaje = new Message();
 		Date date = new Date();
-		mensaje.setFrom(user);
-		mensaje.setTo(user1);
+		mensaje.setFrom(this.connectedUser);
+		mensaje.setTo(this.chatReceiver);
 		mensaje.setTimestamp(date.getTime());
 		
 		sendMessage(message);
-		reply = receiveMessage(this.udpSocket);
-		
-		String[] parametros = reply.split("&");
-		if(parametros[0].equals("OK")){
-			this.observable.notifyObservers("S: Chat request sended");
-		}
-		else if(parametros[0].equals("ER")){
-
-			errorCheck(parametros[1],mensaje);
-		}
-		else{
-
-			this.observable.notifyObservers("S: Unknown error.");
-		}
-		
 		
 		return true;
 	}
