@@ -89,7 +89,7 @@ public class Main {
 				}
 				//Solo si esta conectado al chat recive, mensajes y mensajes para cerrar chat (hay que hacer)
 				// Si recive una solicitud de chat, una denegacion de chat o un mensaje tiene que encontrar su destinatario y enviar el mensaje original
-				else if (parameters[0].trim().equals("TALK") ||parameters[0].trim().equals("NTLK") || parameters[0].trim().equals("CLSE") || parameters[0].trim().equals("MESG") ){
+				else if (parameters[0].trim().equals("TALK") ||parameters[0].trim().equals("NTLK") || parameters[0].trim().equals("CLSE") || parameters[0].trim().equals("MESG") || parameters[0].trim().equals("SCHT") ){
 					
 					for(int i=0;i<connectedUsers.size();i++){
 						
