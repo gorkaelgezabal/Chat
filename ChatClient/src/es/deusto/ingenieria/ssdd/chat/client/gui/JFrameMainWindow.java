@@ -240,6 +240,11 @@ public class JFrameMainWindow extends JFrame implements Observer {
 		} else {
 			//Disconnect from the server
 			if (this.controller.disconnect(txtFieldNick.getText())) {
+
+				//Avisar antes de desconectarse
+				if(this.controller.getChatReceiver() != null){
+					this.controller.sendChatClosure();
+				}
 				this.txtFieldServerIP.setEditable(true);
 				this.txtFieldServerPort.setEditable(true);
 				this.txtFieldNick.setEditable(true);
@@ -250,6 +255,8 @@ public class JFrameMainWindow extends JFrame implements Observer {
 				this.btnSendMsg.setEnabled(false);
 				this.textAreaHistory.setText("");
 				this.textAreaSendMsg.setText("");
+				this.controller.setConnectedUser(null);
+				this.controller.setChatReceiver(null);
 
 				this.setTitle("Chat main window - 'Disconnected'");
 			} else {
@@ -266,13 +273,14 @@ public class JFrameMainWindow extends JFrame implements Observer {
 
 				if (result == JOptionPane.OK_OPTION && this.controller.sendChatRequest(this.listUsers.getSelectedValue(),txtFieldNick.getText() ) ) {
 					this.listUsers.clearSelection();
-					this.setTitle("Chat session between '" + this.controller.getConnectedUser() + "' & '" + this.listUsers.getSelectedValue() + "'");
-				}			
+					this.setTitle("Chat session.");
+				}
+
 				//Send a chat closure
 			} else if (this.controller.isChatSessionOpened() && !this.controller.getChatReceiver().isEmpty()){			
 				int result = JOptionPane.showConfirmDialog(this, "Do you want to close your current chat session with '" + this.controller.getChatReceiver() + "'", "Close chat Session", JOptionPane.YES_NO_OPTION);				
 
-				if (result == JOptionPane.OK_OPTION && this.controller.sendChatClosure(this.controller.getConnectedUserName(),this.controller.getChatReceiverName())) {
+				if (result == JOptionPane.OK_OPTION && this.controller.sendChatClosure()) {
 					Date date = new Date();
 					this.appendReceivedMessageToHistory("Chat session closed", this.controller.getConnectedUserName(), date.getTime());
 					this.listUsers.clearSelection();					
@@ -285,7 +293,7 @@ public class JFrameMainWindow extends JFrame implements Observer {
 	private void btnSendClick() {
 		if (!this.textAreaSendMsg.getText().trim().isEmpty()) {
 
-//			if (this.listUsers.getSelectedIndex() == -1) {	
+			//			if (this.listUsers.getSelectedIndex() == -1) {	
 			if(this.controller.getChatReceiver().isEmpty()){
 				JOptionPane.showMessageDialog(this, "You haven't select a destination user", "Chat initialization error", JOptionPane.ERROR_MESSAGE);				
 
@@ -343,20 +351,17 @@ public class JFrameMainWindow extends JFrame implements Observer {
 				Message newMessage = (Message) object;
 
 				if (newMessage.getTo().getNick().equals(this.controller.getConnectedUser()) ) {
-					
+
 					if(newMessage.getText().equals("TALK")){
 
 						int result = JOptionPane.showConfirmDialog(this, "User: "+ newMessage.getFrom().getNick()  + " wants to chat with you.", "Open chat Session", JOptionPane.YES_NO_OPTION);
 
 						if (result == JOptionPane.OK_OPTION ) {
-							
-							//Si esta conectado a un chat, primero desconectarse del primero antes de iniciar un nuevo chat
-							if(this.controller.getChatReceiver() != null){
-								this.controller.sendChatClosure(this.controller.getConnectedUser(), this.controller.getChatReceiver());
-							}
+
 							this.controller.setChatReceiver(newMessage.getFrom());
 							this.controller.acceptChatRequest(newMessage.getTo().getNick(), newMessage.getFrom().getNick());
 							this.appendReceivedMessageToHistory("Chat session opened", newMessage.getFrom().getNick(), newMessage.getTimestamp());
+
 						}	
 						else if (result == JOptionPane.NO_OPTION ) {
 							this.controller.refuseChatRequest(newMessage.getTo().getNick(), newMessage.getFrom().getNick());
