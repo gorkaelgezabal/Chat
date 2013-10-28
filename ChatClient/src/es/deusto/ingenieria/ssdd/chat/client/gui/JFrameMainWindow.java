@@ -352,21 +352,27 @@ public class JFrameMainWindow extends JFrame implements Observer {
 
 				if (newMessage.getTo().getNick().equals(this.controller.getConnectedUser()) ) {
 
-					if(newMessage.getText().equals("TALK")){
-
-						int result = JOptionPane.showConfirmDialog(this, "User: "+ newMessage.getFrom().getNick()  + " wants to chat with you.", "Open chat Session", JOptionPane.YES_NO_OPTION);
-
-						if (result == JOptionPane.OK_OPTION ) {
-
-							this.controller.setChatReceiver(newMessage.getFrom());
-							this.controller.acceptChatRequest(newMessage.getTo().getNick(), newMessage.getFrom().getNick());
-							this.appendReceivedMessageToHistory("Chat session opened", newMessage.getFrom().getNick(), newMessage.getTimestamp());
-
-						}	
-						else if (result == JOptionPane.NO_OPTION ) {
-							this.controller.refuseChatRequest(newMessage.getTo().getNick(), newMessage.getFrom().getNick());
-							this.appendReceivedMessageToHistory("Chat session from "+newMessage.getFrom().getNick()+" refused", newMessage.getFrom().getNick(), newMessage.getTimestamp());
+					if(newMessage.getText().equals("TALK") ){
+						if( this.controller.getChatReceiver() == null){
+							int result = JOptionPane.showConfirmDialog(this, "User: "+ newMessage.getFrom().getNick()  + " wants to chat with you.", "Open chat Session", JOptionPane.YES_NO_OPTION);
+							
+							if (result == JOptionPane.OK_OPTION ) {
+	
+								this.controller.setChatReceiver(newMessage.getFrom());
+								this.controller.acceptChatRequest(newMessage.getTo().getNick(), newMessage.getFrom().getNick());
+								this.appendReceivedMessageToHistory("Chat session opened", newMessage.getFrom().getNick(), newMessage.getTimestamp());
+	
+							}	
+							else if (result == JOptionPane.NO_OPTION ) {
+								this.controller.refuseChatRequest(newMessage.getTo().getNick(), newMessage.getFrom().getNick());
+								this.appendReceivedMessageToHistory("Chat session from "+newMessage.getFrom().getNick()+" refused", newMessage.getFrom().getNick(), newMessage.getTimestamp());
+							}
 						}
+						else{
+							JOptionPane.showMessageDialog(this, newMessage.getFrom().getNick()+" wants to chat with you. Close your current chat to start chat.", "Chat request", JOptionPane.INFORMATION_MESSAGE);
+
+						}
+							
 					}
 					else if(newMessage.getText().equals("SCHT")){
 						this.controller.setChatReceiver(newMessage.getFrom());
