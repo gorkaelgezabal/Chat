@@ -1,5 +1,8 @@
 package es.deusto.ingenieria.ssdd.chat.client.controller;
 
+import java.net.DatagramPacket;
+import java.net.InetAddress;
+import java.net.MulticastSocket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observer;
@@ -13,6 +16,16 @@ public class ChatClientController {
 	private User connectedUser;
 	private User chatReceiver;
 	private LocalObservable observable;
+	private ArrayList<User>arrConectedUsers;
+	
+	public ArrayList<User> getArrConectedUsers() {
+		return arrConectedUsers;
+	}
+
+	public void setArrConectedUsers(ArrayList<User> arrConectedUsers) {
+		this.arrConectedUsers = arrConectedUsers;
+	}
+
 	
 	public ChatClientController() {
 		this.observable = new LocalObservable();
@@ -66,9 +79,22 @@ public class ChatClientController {
 		
 		this.connectedUser = new User();
 		this.connectedUser.setNick(nick);
-		this.serverIP = ip;
-		this.serverPort = port;
+		MulticastSocket socket = new MulticastSocket(port);
+		socket.setLoopbackMode(true);
+		InetAddress group = InetAddress.getByName(ip);
+		socket.joinGroup(group);
+		String message = "CONN&"+ nick + "&ALL";	
+		DatagramPacket messageOut = new DatagramPacket(message.getBytes(), message.length(), group, port);
+		socket.send(messageOut);
+		Hilo hilo = new Hilo(socket,this);
+		Thread t= new Thread(hilo);
+		t.start();
 		
+		System.out.println(" - Sent a message to '" + messageOut.getAddress().getHostAddress() + ":" + messageOut.getPort() + 
+		                   "' -> " + new String(messageOut.getData()));
+		
+		byte[] buffer = new byte[1024];			
+		DatagramPacket messageIn = null;
 		return true;
 	}
 	

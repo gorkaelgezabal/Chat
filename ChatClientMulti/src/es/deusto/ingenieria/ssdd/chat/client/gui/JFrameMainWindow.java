@@ -38,7 +38,8 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
 import es.deusto.ingenieria.ssdd.chat.client.controller.ChatClientController;
-import es.deusto.ingenieria.ssdd.chat.data.Message;
+import es.deusto.ingenieria.ssdd.chat.client.controller.Message;
+
 
 public class JFrameMainWindow extends JFrame implements Observer {
 
