@@ -336,8 +336,8 @@ public class JFrameMainWindow extends JFrame implements Observer {
 			if (object.getClass().getName().equals(Message.class.getName())) {
 				Message newMessage = (Message) object;
 			
-				if (newMessage.getTo().getNick() == this.controller.getConnectedUser()) {
-					this.appendReceivedMessageToHistory(newMessage.getText(), newMessage.getFrom().getNick(), newMessage.getTimestamp());
+				if (newMessage.getTo() == this.controller.getConnectedUser()) {
+					this.appendReceivedMessageToHistory(newMessage.getText(), newMessage.getFrom(), newMessage.getTimestamp());
 				}
 			}
 		}

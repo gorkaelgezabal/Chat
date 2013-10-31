@@ -6,8 +6,8 @@ import java.util.Date;
 public class Message {
 	private long timestamp;
 	private String text;
-	private User from;
-	private User to;
+	private String from;
+	private String to;
 	
 	private static SimpleDateFormat dateFormatter = new SimpleDateFormat("HH:mm:ss");
 	
@@ -27,22 +27,23 @@ public class Message {
 		this.text = text;
 	}
 	
-	public User getFrom() {
+	
+	public String getFrom() {
 		return from;
 	}
-	
-	public void setFrom(User from) {
+
+	public void setFrom(String from) {
 		this.from = from;
 	}
-	
-	public User getTo() {
+
+	public String getTo() {
 		return to;
 	}
-	
-	public void setTo(User to) {
+
+	public void setTo(String to) {
 		this.to = to;
 	}
-	
+
 	public boolean equals(Object obj) {
 		if (obj != null && obj.getClass().equals(this.getClass())) {
 			Message otherMsg = (Message)obj;
